@@ -1,0 +1,1361 @@
+<!doctype html>
+<html lang="th">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Link Vault - Experimental</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Noto+Sans+Thai:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+    <style>
+      :root {
+        color-scheme: dark;
+        --bg: #0a0a0a;
+        --fg: #ffffff;
+        --fg-muted: #a3a3a3;
+        --accent: #d4ff00;
+        --accent-dark: #a3cc00;
+        --border: #333333;
+        --border-light: #555555;
+        --danger: #ff2a2a;
+        --radius: 0px;
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        background: var(--bg);
+        color: var(--fg);
+        font-family: "Space Grotesk", "Noto Sans Thai", sans-serif;
+        min-height: 100vh;
+        overflow-x: hidden;
+        line-height: 1.5;
+      }
+
+      button,
+      input,
+      select {
+        font: inherit;
+      }
+
+      button {
+        cursor: pointer;
+      }
+
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+
+      /* Typography */
+      .massive-text {
+        font-size: clamp(4rem, 15vw, 12rem);
+        font-weight: 700;
+        line-height: 0.85;
+        text-transform: uppercase;
+        letter-spacing: -0.04em;
+        margin-bottom: 24px;
+        color: var(--fg);
+      }
+      .massive-text span {
+        color: var(--accent);
+      }
+
+      h2,
+      h3 {
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: -0.02em;
+      }
+
+      /* Layout */
+      .container {
+        width: 100%;
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 0 24px;
+      }
+
+      .hero {
+        padding: 64px 0 32px 0;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .hero-stats {
+        display: inline-flex;
+        align-items: baseline;
+        gap: 12px;
+        border: 2px solid var(--border);
+        padding: 12px 24px;
+        background: var(--bg);
+      }
+
+      .stat-value {
+        font-size: 32px;
+        font-weight: 700;
+        color: var(--accent);
+      }
+
+      .stat-label {
+        font-size: 14px;
+        font-weight: 600;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+      }
+
+      /* Marquee */
+      .marquee-container {
+        overflow: hidden;
+        white-space: nowrap;
+        border-top: 2px solid var(--border);
+        border-bottom: 2px solid var(--border);
+        padding: 16px 0;
+        background: var(--accent);
+        color: #000;
+        display: flex;
+        margin-bottom: 48px;
+      }
+
+      .marquee-content {
+        display: flex;
+        animation: marquee 10s linear infinite;
+        font-size: 16px;
+        font-weight: 700;
+        letter-spacing: 2px;
+      }
+
+      .marquee-content span {
+        padding-right: 48px;
+      }
+
+      @keyframes marquee {
+        0% {
+          transform: translateX(0);
+        }
+        100% {
+          transform: translateX(-50%);
+        }
+      }
+
+      /* Grid Layout */
+      .layout-grid {
+        display: grid;
+        grid-template-columns: 360px 1fr;
+        gap: 48px;
+        align-items: start;
+        padding-bottom: 96px;
+      }
+
+      @media (max-width: 1024px) {
+        .layout-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      /* Forms & Panels */
+      .panel {
+        border: 2px solid var(--border);
+        background: var(--bg);
+        padding: 32px;
+        position: sticky;
+        top: 32px;
+      }
+
+      .panel-header {
+        margin-bottom: 24px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .panel-header h2 {
+        font-size: 24px;
+      }
+
+      .badge {
+        background: var(--fg);
+        color: var(--bg);
+        padding: 4px 12px;
+        font-size: 12px;
+        font-weight: 700;
+        text-transform: uppercase;
+      }
+
+      .field {
+        margin-bottom: 20px;
+      }
+
+      .label {
+        display: block;
+        font-size: 12px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        margin-bottom: 8px;
+        color: var(--fg-muted);
+      }
+
+      .input-wrap {
+        position: relative;
+      }
+
+      .input-wrap i {
+        position: absolute;
+        top: 50%;
+        left: 16px;
+        transform: translateY(-50%);
+        color: var(--fg-muted);
+        font-size: 18px;
+        pointer-events: none;
+      }
+
+      .input,
+      .select {
+        width: 100%;
+        padding: 14px 16px 14px 44px;
+        background: transparent;
+        border: 2px solid var(--border);
+        color: var(--fg);
+        font-size: 15px;
+        outline: none;
+        transition:
+          border-color 150ms,
+          box-shadow 150ms;
+        appearance: none;
+      }
+
+      .input:focus,
+      .select:focus {
+        border-color: var(--accent);
+        box-shadow: 0 0 0 4px rgba(212, 255, 0, 0.15);
+      }
+
+      .input[aria-invalid="true"] {
+        border-color: var(--danger);
+      }
+
+      .error {
+        display: none;
+        padding: 12px;
+        background: rgba(255, 42, 42, 0.1);
+        border: 2px solid var(--danger);
+        color: var(--danger);
+        font-size: 13px;
+        font-weight: 500;
+        margin-bottom: 20px;
+      }
+
+      .error.is-visible {
+        display: block;
+      }
+
+      .button-row {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        margin-top: 32px;
+      }
+
+      /* Buttons */
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        padding: 14px 24px;
+        font-weight: 700;
+        font-size: 14px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        border: 2px solid var(--fg);
+        background: var(--bg);
+        color: var(--fg);
+        transition: all 150ms cubic-bezier(0.4, 0, 0.2, 1);
+      }
+
+      .btn:hover:not(:disabled) {
+        transform: translate(-4px, -4px);
+        box-shadow: 4px 4px 0 var(--accent);
+        border-color: var(--accent);
+        color: var(--accent);
+      }
+
+      .btn:active:not(:disabled) {
+        transform: translate(0, 0);
+        box-shadow: 0 0 0 transparent;
+      }
+
+      .btn:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+
+      .btn-brand {
+        background: var(--accent);
+        color: #000;
+        border-color: var(--accent);
+      }
+
+      .btn-brand:hover:not(:disabled) {
+        background: var(--accent-dark);
+        color: #000;
+        border-color: var(--accent-dark);
+        box-shadow: 4px 4px 0 var(--fg);
+      }
+
+      .btn-danger {
+        border-color: var(--border);
+        color: var(--danger);
+      }
+
+      .btn-danger:hover:not(:disabled) {
+        border-color: var(--danger);
+        background: rgba(255, 42, 42, 0.1);
+        box-shadow: 4px 4px 0 var(--danger);
+        color: var(--danger);
+      }
+
+      .btn-icon {
+        padding: 10px;
+        border: 2px solid var(--border);
+        background: transparent;
+        color: var(--fg);
+        transition: all 150ms;
+      }
+
+      .btn-icon:hover {
+        border-color: var(--accent);
+        color: var(--accent);
+        transform: translate(-2px, -2px);
+        box-shadow: 2px 2px 0 var(--accent);
+      }
+
+      /* Toolbar */
+      .toolbar {
+        display: flex;
+        flex-direction: column;
+        gap: 24px;
+        margin-bottom: 32px;
+      }
+
+      .toolbar-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 16px;
+      }
+
+      .toolbar-actions {
+        display: flex;
+        gap: 12px;
+      }
+
+      .search-bar {
+        flex: 1;
+        min-width: 280px;
+      }
+
+      /* Tags */
+      .tag-filters {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+      }
+
+      .tag-btn {
+        padding: 6px 16px;
+        background: transparent;
+        border: 2px solid var(--border);
+        color: var(--fg-muted);
+        font-size: 13px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        transition: all 150ms;
+      }
+
+      .tag-btn:hover {
+        border-color: var(--fg);
+        color: var(--fg);
+      }
+
+      .tag-btn.active {
+        background: var(--fg);
+        color: #000;
+        border-color: var(--fg);
+      }
+
+      /* Link Grid */
+      .link-list {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+        gap: 24px;
+      }
+
+      .link-card {
+        position: relative;
+        border: 2px solid var(--border);
+        background: var(--bg);
+        padding: 24px;
+        display: flex;
+        flex-direction: column;
+        transition: all 200ms cubic-bezier(0.4, 0, 0.2, 1);
+      }
+
+      .link-card:hover {
+        transform: translate(-6px, -6px);
+        box-shadow: 6px 6px 0 var(--accent);
+        border-color: var(--accent);
+      }
+
+      .link-card.pinned {
+        border-color: var(--fg);
+      }
+
+      .link-card.pinned::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 0;
+        height: 0;
+        border-style: solid;
+        border-width: 0 32px 32px 0;
+        border-color: transparent var(--fg) transparent transparent;
+      }
+
+      .link-main {
+        display: flex;
+        align-items: flex-start;
+        gap: 16px;
+        margin-bottom: 24px;
+      }
+
+      .favicon {
+        width: 32px;
+        height: 32px;
+        flex: 0 0 auto;
+        border: 2px solid var(--border-light);
+        padding: 2px;
+        background: var(--bg);
+      }
+
+      .link-text {
+        flex: 1;
+        min-width: 0;
+      }
+
+      .link-title {
+        display: block;
+        font-size: 18px;
+        font-weight: 700;
+        color: var(--fg);
+        margin-bottom: 4px;
+        word-wrap: break-word;
+      }
+
+      .tag-badge {
+        display: inline-block;
+        font-size: 10px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        padding: 2px 6px;
+        border: 1px solid var(--border-light);
+        color: var(--fg-muted);
+        margin-left: 8px;
+        vertical-align: middle;
+      }
+
+      .link-url {
+        display: block;
+        font-size: 13px;
+        color: var(--fg-muted);
+        word-wrap: break-word;
+      }
+
+      .link-actions {
+        display: flex;
+        gap: 8px;
+        margin-top: auto;
+        border-top: 2px solid var(--border);
+        padding-top: 16px;
+      }
+
+      .icon-btn {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 40px;
+        background: transparent;
+        border: 2px solid var(--border);
+        color: var(--fg);
+        transition: all 150ms;
+      }
+
+      .icon-btn:hover {
+        background: var(--fg);
+        color: #000;
+      }
+
+      .icon-btn.active {
+        background: var(--accent);
+        border-color: var(--accent);
+        color: #000;
+      }
+
+      .icon-btn.delete-btn:hover {
+        background: var(--danger);
+        border-color: var(--danger);
+        color: #fff;
+      }
+
+      /* Empty State */
+      .empty {
+        grid-column: 1 / -1;
+        padding: 64px 32px;
+        border: 2px dashed var(--border-light);
+        text-align: center;
+      }
+
+      .empty i {
+        font-size: 48px;
+        color: var(--border-light);
+        margin-bottom: 16px;
+      }
+
+      .empty-title {
+        font-size: 24px;
+        font-weight: 700;
+        margin-bottom: 8px;
+      }
+
+      .empty-copy {
+        color: var(--fg-muted);
+      }
+
+      /* Modals & Toasts */
+      .toast {
+        position: fixed;
+        bottom: 32px;
+        left: 50%;
+        transform: translateX(-50%) translateY(100px);
+        background: var(--accent);
+        color: #000;
+        padding: 16px 24px;
+        border: 2px solid #000;
+        box-shadow: 4px 4px 0 rgba(255, 255, 255, 0.2);
+        font-weight: 700;
+        font-size: 14px;
+        text-transform: uppercase;
+        display: flex;
+        align-items: center;
+        gap: 24px;
+        opacity: 0;
+        transition: all 300ms cubic-bezier(0.4, 0, 0.2, 1);
+        z-index: 1000;
+      }
+
+      .toast.is-visible {
+        transform: translateX(-50%) translateY(0);
+        opacity: 1;
+      }
+
+      .undo-btn {
+        background: #000;
+        color: var(--accent);
+        border: none;
+        padding: 6px 12px;
+        font-weight: 700;
+        text-transform: uppercase;
+      }
+
+      .undo-btn:hover {
+        background: var(--fg);
+        color: #000;
+      }
+
+      .modal-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.8);
+        backdrop-filter: blur(8px);
+        z-index: 100;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 200ms;
+      }
+
+      .modal-overlay.is-visible {
+        opacity: 1;
+        pointer-events: auto;
+      }
+
+      .modal-content {
+        width: 100%;
+        max-width: 500px;
+        background: var(--bg);
+        border: 2px solid var(--accent);
+        padding: 32px;
+        transform: translateY(20px);
+        transition: transform 200ms;
+        box-shadow: 8px 8px 0 rgba(212, 255, 0, 0.2);
+      }
+
+      .modal-overlay.is-visible .modal-content {
+        transform: translateY(0);
+      }
+
+      .modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 24px;
+        border-bottom: 2px solid var(--border);
+        padding-bottom: 16px;
+      }
+
+      .modal-title {
+        font-size: 24px;
+        color: var(--accent);
+      }
+
+      .modal-close {
+        background: transparent;
+        border: none;
+        color: var(--fg);
+        font-size: 24px;
+      }
+
+      .modal-close:hover {
+        color: var(--accent);
+      }
+    </style>
+  </head>
+  <body>
+    <main class="page">
+      <div class="container">
+        <header class="hero">
+          <h1 class="massive-text">LINK<span>VAULT</span></h1>
+          <div class="hero-stats">
+            <span class="stat-value" id="statTotal">0</span>
+            <span class="stat-label">Records Encrypted</span>
+          </div>
+        </header>
+      </div>
+
+      <div class="marquee-container">
+        <div class="marquee-content">
+          <span
+            >SYSTEM ONLINE // EXPERIMENTAL UI // SECURE YOUR KNOWLEDGE //</span
+          >
+          <span
+            >SYSTEM ONLINE // EXPERIMENTAL UI // SECURE YOUR KNOWLEDGE //</span
+          >
+        </div>
+      </div>
+
+      <div class="container">
+        <div class="layout-grid">
+          <!-- Form Sidebar -->
+          <aside class="sidebar">
+            <div class="panel">
+              <div class="panel-header">
+                <h2 id="formTitle">ADD ENTRY</h2>
+                <span class="badge" id="linkCount">0</span>
+              </div>
+
+              <form id="linkForm" class="form" novalidate>
+                <div class="field">
+                  <label class="label" for="titleInput">Title</label>
+                  <div class="input-wrap">
+                    <i class="ph ph-text-t" aria-hidden="true"></i>
+                    <input
+                      id="titleInput"
+                      class="input"
+                      type="text"
+                      autocomplete="off"
+                      placeholder="E.g. GitHub, Portfolio"
+                      required
+                    />
+                  </div>
+                </div>
+
+                <div class="field">
+                  <label class="label" for="urlInput">URL</label>
+                  <div class="input-wrap">
+                    <i class="ph ph-link" aria-hidden="true"></i>
+                    <input
+                      id="urlInput"
+                      class="input"
+                      type="url"
+                      autocomplete="off"
+                      placeholder="github.com/user"
+                      required
+                    />
+                  </div>
+                </div>
+
+                <div class="field">
+                  <label class="label" for="tagInput">Category</label>
+                  <div class="input-wrap">
+                    <i class="ph ph-tag" aria-hidden="true"></i>
+                    <select id="tagInput" class="select">
+                      <option value="None">Uncategorized</option>
+                      <option value="Work">Work</option>
+                      <option value="Personal">Personal</option>
+                      <option value="Tools">Tools</option>
+                      <option value="Docs">Docs</option>
+                    </select>
+                  </div>
+                </div>
+
+                <p id="errorMsg" class="error" role="alert">
+                  Invalid input data.
+                </p>
+
+                <div class="button-row">
+                  <button id="submitButton" class="btn btn-brand" type="submit">
+                    <i class="ph ph-plus-circle" aria-hidden="true"></i>
+                    ADD LINK
+                  </button>
+
+                  <button
+                    id="clearButton"
+                    class="btn btn-danger"
+                    type="button"
+                    disabled
+                  >
+                    <i class="ph ph-trash" aria-hidden="true"></i>
+                    PURGE ALL
+                  </button>
+                </div>
+              </form>
+            </div>
+          </aside>
+
+          <!-- Main Content -->
+          <section class="main-content">
+            <div class="toolbar">
+              <div class="toolbar-top">
+                <h2 id="linksTitle" style="font-size: 32px">DATABASE</h2>
+
+                <div class="toolbar-actions">
+                  <button
+                    id="sortButton"
+                    class="btn-icon"
+                    type="button"
+                    title="Sort Order"
+                  >
+                    <i class="ph ph-sort-descending" aria-hidden="true"></i>
+                  </button>
+                  <button
+                    id="importBtn"
+                    class="btn-icon"
+                    type="button"
+                    title="Import JSON"
+                  >
+                    <i class="ph ph-upload-simple"></i>
+                  </button>
+                  <button
+                    id="exportBtn"
+                    class="btn-icon"
+                    type="button"
+                    title="Export JSON"
+                  >
+                    <i class="ph ph-download-simple"></i>
+                  </button>
+                  <input
+                    type="file"
+                    id="fileInput"
+                    accept=".json"
+                    style="display: none"
+                  />
+                </div>
+              </div>
+
+              <div class="search-bar">
+                <div class="input-wrap">
+                  <i class="ph ph-magnifying-glass"></i>
+                  <input
+                    id="searchInput"
+                    class="input"
+                    type="text"
+                    placeholder="Search database..."
+                  />
+                </div>
+              </div>
+
+              <div class="tag-filters" id="tagFilters">
+                <button class="tag-btn active" data-tag="All">ALL</button>
+                <button class="tag-btn" data-tag="Work">WORK</button>
+                <button class="tag-btn" data-tag="Personal">PERSONAL</button>
+                <button class="tag-btn" data-tag="Tools">TOOLS</button>
+                <button class="tag-btn" data-tag="Docs">DOCS</button>
+                <button class="tag-btn" data-tag="None">UNCATEGORIZED</button>
+              </div>
+            </div>
+
+            <div id="linkList" class="link-list" aria-live="polite"></div>
+          </section>
+        </div>
+      </div>
+    </main>
+
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+    <!-- Edit Modal -->
+    <div id="editModal" class="modal-overlay">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3 class="modal-title">EDIT ENTRY</h3>
+          <button id="closeModalBtn" class="modal-close">
+            <i class="ph ph-x"></i>
+          </button>
+        </div>
+        <form id="editForm" class="form" novalidate>
+          <input type="hidden" id="editIdInput" />
+          <div class="field">
+            <label class="label" for="editTitleInput">Title</label>
+            <div class="input-wrap">
+              <i class="ph ph-text-t" aria-hidden="true"></i>
+              <input id="editTitleInput" class="input" type="text" required />
+            </div>
+          </div>
+          <div class="field">
+            <label class="label" for="editUrlInput">URL</label>
+            <div class="input-wrap">
+              <i class="ph ph-link" aria-hidden="true"></i>
+              <input id="editUrlInput" class="input" type="url" required />
+            </div>
+          </div>
+          <div class="field">
+            <label class="label" for="editTagInput">Category</label>
+            <div class="input-wrap">
+              <i class="ph ph-tag" aria-hidden="true"></i>
+              <select id="editTagInput" class="select">
+                <option value="None">Uncategorized</option>
+                <option value="Work">Work</option>
+                <option value="Personal">Personal</option>
+                <option value="Tools">Tools</option>
+                <option value="Docs">Docs</option>
+              </select>
+            </div>
+          </div>
+          <p id="editErrorMsg" class="error" role="alert">
+            Invalid input data.
+          </p>
+          <div class="button-row">
+            <button id="saveEditBtn" class="btn btn-brand" type="submit">
+              SAVE CHANGES
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <script>
+      const STORAGE_KEY = "neon_link_vault_links";
+
+      const form = document.getElementById("linkForm");
+      const titleInput = document.getElementById("titleInput");
+      const urlInput = document.getElementById("urlInput");
+      const tagInput = document.getElementById("tagInput");
+      const errorMsg = document.getElementById("errorMsg");
+      const submitButton = document.getElementById("submitButton");
+      const clearButton = document.getElementById("clearButton");
+      const sortButton = document.getElementById("sortButton");
+      const linkList = document.getElementById("linkList");
+      const linkCount = document.getElementById("linkCount");
+      const statTotal = document.getElementById("statTotal");
+      const toast = document.getElementById("toast");
+
+      const searchInput = document.getElementById("searchInput");
+      const tagFilters = document.getElementById("tagFilters");
+      const importBtn = document.getElementById("importBtn");
+      const exportBtn = document.getElementById("exportBtn");
+      const fileInput = document.getElementById("fileInput");
+
+      const editModal = document.getElementById("editModal");
+      const editForm = document.getElementById("editForm");
+      const editIdInput = document.getElementById("editIdInput");
+      const editTitleInput = document.getElementById("editTitleInput");
+      const editUrlInput = document.getElementById("editUrlInput");
+      const editTagInput = document.getElementById("editTagInput");
+      const editErrorMsg = document.getElementById("editErrorMsg");
+      const closeModalBtn = document.getElementById("closeModalBtn");
+
+      let newestFirst = true;
+      let toastTimer = null;
+
+      let currentFilterTag = "All";
+      let searchQuery = "";
+      let undoLink = null;
+      let undoTimeout = null;
+
+      document.addEventListener("DOMContentLoaded", () => {
+        renderLinks(getLinks());
+      });
+
+      form.addEventListener("submit", (event) => {
+        event.preventDefault();
+        saveLink();
+      });
+
+      searchInput.addEventListener("input", (e) => {
+        searchQuery = e.target.value.toLowerCase();
+        renderLinks(getLinks());
+      });
+
+      tagFilters.addEventListener("click", (e) => {
+        if (e.target.classList.contains("tag-btn")) {
+          document
+            .querySelectorAll(".tag-btn")
+            .forEach((btn) => btn.classList.remove("active"));
+          e.target.classList.add("active");
+          currentFilterTag = e.target.dataset.tag;
+          renderLinks(getLinks());
+        }
+      });
+
+      exportBtn.addEventListener("click", () => {
+        const links = getLinks();
+        if (links.length === 0) {
+          showToast("NO DATA TO EXPORT");
+          return;
+        }
+        const dataStr =
+          "data:text/json;charset=utf-8," +
+          encodeURIComponent(JSON.stringify(links, null, 2));
+        const downloadAnchorNode = document.createElement("a");
+        downloadAnchorNode.setAttribute("href", dataStr);
+        downloadAnchorNode.setAttribute("download", "link_vault_backup.json");
+        document.body.appendChild(downloadAnchorNode);
+        downloadAnchorNode.click();
+        downloadAnchorNode.remove();
+        showToast("JSON EXPORTED");
+      });
+
+      importBtn.addEventListener("click", () => fileInput.click());
+
+      fileInput.addEventListener("change", (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = (event) => {
+          try {
+            const importedLinks = JSON.parse(event.target.result);
+            if (Array.isArray(importedLinks)) {
+              const currentLinks = getLinks();
+              const existingUrls = new Set(currentLinks.map((l) => l.url));
+              let addedCount = 0;
+              for (const link of importedLinks) {
+                if (link.url && !existingUrls.has(link.url)) {
+                  currentLinks.push({
+                    id:
+                      link.id ||
+                      (crypto.randomUUID
+                        ? crypto.randomUUID()
+                        : String(Date.now() + Math.random())),
+                    title: link.title || link.url,
+                    url: link.url,
+                    tag: link.tag || "None",
+                    isPinned: !!link.isPinned,
+                    createdAt: link.createdAt || new Date().toISOString(),
+                  });
+                  existingUrls.add(link.url);
+                  addedCount++;
+                }
+              }
+              setLinks(currentLinks);
+              renderLinks(currentLinks);
+              showToast(`IMPORTED ${addedCount} RECORDS`);
+            }
+          } catch (err) {
+            showToast("INVALID FILE");
+          }
+        };
+        reader.readAsText(file);
+        e.target.value = "";
+      });
+
+      closeModalBtn.addEventListener("click", () => {
+        editModal.classList.remove("is-visible");
+      });
+
+      editForm.addEventListener("submit", (e) => {
+        e.preventDefault();
+        saveEditedLink();
+      });
+
+      clearButton.addEventListener("click", () => {
+        const links = getLinks();
+        if (links.length === 0) return;
+        const confirmed = confirm("PURGE ALL RECORDS? THIS CANNOT BE UNDONE.");
+        if (!confirmed) return;
+        localStorage.removeItem(STORAGE_KEY);
+        renderLinks([]);
+        showToast("DATABASE PURGED");
+      });
+
+      sortButton.addEventListener("click", () => {
+        newestFirst = !newestFirst;
+        sortButton.innerHTML = "";
+        const icon = document.createElement("i");
+        icon.className = newestFirst
+          ? "ph ph-sort-descending"
+          : "ph ph-sort-ascending";
+        icon.setAttribute("aria-hidden", "true");
+        sortButton.appendChild(icon);
+      });
+
+      function getLinks() {
+        try {
+          const data = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+          return Array.isArray(data) ? data : [];
+        } catch {
+          return [];
+        }
+      }
+
+      function setLinks(links) {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(links));
+      }
+
+      function normalizeUrl(input) {
+        let value = input.trim();
+        if (!value) return null;
+        if (!/^https?:\/\//i.test(value)) {
+          value = "https://" + value;
+        }
+        try {
+          const parsed = new URL(value);
+          if (parsed.protocol !== "http:" && parsed.protocol !== "https:")
+            return null;
+          return parsed.href;
+        } catch {
+          return null;
+        }
+      }
+
+      function saveLink() {
+        const title = titleInput.value.trim();
+        const url = normalizeUrl(urlInput.value);
+        const tag = tagInput.value;
+
+        clearError();
+
+        if (!title || !url) {
+          showError("INVALID FIELDS DETECTED");
+          return;
+        }
+
+        const links = getLinks();
+
+        if (links.some((l) => l.url === url)) {
+          showError("DUPLICATE URL IN DATABASE");
+          return;
+        }
+
+        links.push({
+          id: crypto.randomUUID ? crypto.randomUUID() : String(Date.now()),
+          title,
+          url,
+          tag,
+          isPinned: false,
+          createdAt: new Date().toISOString(),
+        });
+
+        setLinks(links);
+
+        titleInput.value = "";
+        urlInput.value = "";
+        tagInput.value = "None";
+
+        renderLinks(links);
+        showToast("RECORD ADDED");
+      }
+
+      function deleteLink(id) {
+        const links = getLinks();
+        const targetIndex = links.findIndex((link) => link.id === id);
+        if (targetIndex > -1) {
+          undoLink = links[targetIndex];
+          links.splice(targetIndex, 1);
+          setLinks(links);
+          renderLinks(links);
+          showToast("RECORD DELETED", true);
+        }
+      }
+
+      window.undoDelete = function () {
+        if (undoLink) {
+          const links = getLinks();
+          if (!links.some((l) => l.url === undoLink.url)) {
+            links.push(undoLink);
+            setLinks(links);
+            renderLinks(links);
+          }
+          undoLink = null;
+          toast.classList.remove("is-visible");
+        }
+      };
+
+      function togglePin(id) {
+        const links = getLinks();
+        const link = links.find((l) => l.id === id);
+        if (link) {
+          link.isPinned = !link.isPinned;
+          setLinks(links);
+          renderLinks(links);
+        }
+      }
+
+      function openEditModal(id) {
+        const links = getLinks();
+        const link = links.find((l) => l.id === id);
+        if (link) {
+          editIdInput.value = link.id;
+          editTitleInput.value = link.title;
+          editUrlInput.value = link.url;
+          editTagInput.value = link.tag || "None";
+          editErrorMsg.classList.remove("is-visible");
+          editModal.classList.add("is-visible");
+        }
+      }
+
+      function saveEditedLink() {
+        const id = editIdInput.value;
+        const title = editTitleInput.value.trim();
+        const url = normalizeUrl(editUrlInput.value);
+        const tag = editTagInput.value;
+
+        editErrorMsg.classList.remove("is-visible");
+
+        if (!title || !url) {
+          editErrorMsg.textContent = "INVALID FIELDS DETECTED";
+          editErrorMsg.classList.add("is-visible");
+          return;
+        }
+
+        const links = getLinks();
+
+        if (links.some((l) => l.url === url && l.id !== id)) {
+          editErrorMsg.textContent = "DUPLICATE URL IN DATABASE";
+          editErrorMsg.classList.add("is-visible");
+          return;
+        }
+
+        const linkIndex = links.findIndex((l) => l.id === id);
+        if (linkIndex > -1) {
+          links[linkIndex].title = title;
+          links[linkIndex].url = url;
+          links[linkIndex].tag = tag;
+          setLinks(links);
+          renderLinks(links);
+          editModal.classList.remove("is-visible");
+          showToast("RECORD UPDATED");
+        }
+      }
+
+      function renderLinks(allLinks) {
+        linkList.replaceChildren();
+
+        let links = allLinks.filter((link) => {
+          const matchTag =
+            currentFilterTag === "All" ||
+            (link.tag || "None") === currentFilterTag;
+          const searchTarget = (link.title + " " + link.url).toLowerCase();
+          const matchSearch = searchTarget.includes(searchQuery);
+          return matchTag && matchSearch;
+        });
+
+        linkCount.textContent = `${links.length}`;
+        statTotal.textContent = allLinks.length;
+        clearButton.disabled = allLinks.length === 0;
+
+        if (links.length === 0) {
+          renderEmptyState();
+          return;
+        }
+
+        const orderedLinks = [...links].sort((a, b) => {
+          if (a.isPinned !== b.isPinned) {
+            return a.isPinned ? -1 : 1;
+          }
+          const timeA = new Date(a.createdAt || 0).getTime();
+          const timeB = new Date(b.createdAt || 0).getTime();
+          return newestFirst ? timeB - timeA : timeA - timeB;
+        });
+
+        orderedLinks.forEach((link) => {
+          const card = document.createElement("article");
+          card.className = "link-card" + (link.isPinned ? " pinned" : "");
+
+          const anchor = document.createElement("a");
+          anchor.className = "link-main";
+          anchor.href = link.url;
+          anchor.target = "_blank";
+          anchor.rel = "noopener noreferrer";
+
+          const favicon = document.createElement("img");
+          favicon.className = "favicon";
+          try {
+            const domain = new URL(link.url).hostname;
+            favicon.src = `https://www.google.com/s2/favicons?domain=${domain}&sz=64`;
+          } catch {
+            favicon.src =
+              "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxNiAxNiI+PHBhdGggZmlsbD0iIzk2QUJCRCIgZD0iTTggMGExIDEgMCAwIDAtMSAxdjYuNUw0LjIgNS4zYTEgMSAwIDAgMC0xLjQgMS40bDQgNGEx MSAwIDAgMCAxLjQgMGw0LTRhMSAxIDAgMCAwLTEuNC0xLjRMNyA3LjVWMWEx MSAwIDAgMC0xLTF6Ii8+PC9zdmc+";
+          }
+          favicon.alt = "";
+
+          const textBox = document.createElement("span");
+          textBox.className = "link-text";
+
+          const title = document.createElement("span");
+          title.className = "link-title";
+          title.textContent = link.title;
+
+          if (link.tag && link.tag !== "None") {
+            const badge = document.createElement("span");
+            badge.className = "tag-badge";
+            badge.textContent = link.tag;
+            title.appendChild(badge);
+          }
+
+          const url = document.createElement("span");
+          url.className = "link-url";
+          url.textContent = link.url;
+
+          const actionsContainer = document.createElement("div");
+          actionsContainer.className = "link-actions";
+
+          const pinBtn = document.createElement("button");
+          pinBtn.className = "icon-btn" + (link.isPinned ? " active" : "");
+          pinBtn.innerHTML = `<i class="${link.isPinned ? "ph-fill ph-push-pin" : "ph ph-push-pin"}"></i>`;
+          pinBtn.title = link.isPinned ? "UNPIN" : "PIN";
+          pinBtn.onclick = () => togglePin(link.id);
+
+          const copyBtn = document.createElement("button");
+          copyBtn.className = "icon-btn";
+          copyBtn.innerHTML = `<i class="ph ph-copy"></i>`;
+          copyBtn.title = "COPY URL";
+          copyBtn.onclick = () => {
+            navigator.clipboard.writeText(link.url).then(() => {
+              showToast("URL COPIED");
+            });
+          };
+
+          const editBtn = document.createElement("button");
+          editBtn.className = "icon-btn";
+          editBtn.innerHTML = `<i class="ph ph-pencil-simple"></i>`;
+          editBtn.title = "EDIT";
+          editBtn.onclick = () => openEditModal(link.id);
+
+          const deleteButton = document.createElement("button");
+          deleteButton.className = "delete-btn icon-btn";
+          deleteButton.title = "DELETE";
+          deleteButton.setAttribute("aria-label", `Delete ${link.title}`);
+          deleteButton.innerHTML = `<i class="ph ph-trash" aria-hidden="true"></i>`;
+          deleteButton.onclick = () => deleteLink(link.id);
+
+          actionsContainer.appendChild(pinBtn);
+          actionsContainer.appendChild(copyBtn);
+          actionsContainer.appendChild(editBtn);
+          actionsContainer.appendChild(deleteButton);
+
+          textBox.appendChild(title);
+          textBox.appendChild(url);
+          anchor.appendChild(favicon);
+          anchor.appendChild(textBox);
+
+          card.appendChild(anchor);
+          card.appendChild(actionsContainer);
+
+          linkList.appendChild(card);
+        });
+      }
+
+      function renderEmptyState() {
+        const empty = document.createElement("div");
+        empty.className = "empty";
+
+        const icon = document.createElement("i");
+        icon.className = "ph ph-ghost";
+        icon.setAttribute("aria-hidden", "true");
+
+        const title = document.createElement("p");
+        title.className = "empty-title";
+        title.textContent = "DATABASE EMPTY";
+
+        const copy = document.createElement("p");
+        copy.className = "empty-copy";
+        copy.textContent = "AWAITING INPUT.";
+
+        empty.appendChild(icon);
+        empty.appendChild(title);
+        empty.appendChild(copy);
+
+        linkList.appendChild(empty);
+      }
+
+      function showError(message) {
+        errorMsg.textContent = message;
+        errorMsg.classList.add("is-visible");
+        titleInput.setAttribute("aria-invalid", !titleInput.value.trim());
+        urlInput.setAttribute("aria-invalid", !normalizeUrl(urlInput.value));
+      }
+
+      function clearError() {
+        errorMsg.classList.remove("is-visible");
+        titleInput.removeAttribute("aria-invalid");
+        urlInput.removeAttribute("aria-invalid");
+      }
+
+      function showToast(message, allowUndo = false) {
+        clearTimeout(toastTimer);
+        clearTimeout(undoTimeout);
+
+        if (allowUndo) {
+          toast.innerHTML = `
+          <div class="toast-content">
+            <span>${message}</span>
+            <button class="undo-btn" onclick="undoDelete()">UNDO</button>
+          </div>
+        `;
+        } else {
+          toast.textContent = message;
+          undoLink = null;
+        }
+
+        toast.classList.add("is-visible");
+
+        toastTimer = setTimeout(
+          () => {
+            toast.classList.remove("is-visible");
+            undoLink = null;
+          },
+          allowUndo ? 5000 : 1800,
+        );
+      }
+    </script>
+  </body>
+</html>
